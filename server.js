@@ -29,13 +29,41 @@ MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error
         });
     });
 
+    app.get("/do-logout", (req, res) => {
+        req.session.destroy();
+        res.redirect("/admin")
+    });
+
     app.get("/admin/dashboard", (req, res) => {
-        if (req.session.admin)
-        res.render("admin/dashboard");
+        if (req.session.admin) {
+            res.render("admin/dashboard");
+        }else {
+            res.redirect("/admin");
+        }
     });
 
     app.get("/admin/posts", (req, res) => {
-        res.render("admin/posts");
+        if (req.session.admin) {
+            res.render("admin/posts");
+        }else {
+            res.redirect("/admin");
+        }
+    });
+
+    app.get("/admin", (req, res) => {
+        res.render("admin/login")
+    });
+
+    app.post("/do-admin-login", (req, res) => {
+        blog.collection("admins").findOne({
+            "email": req.body.email,
+            "password": req.body.password
+        }, (error, admin) => {
+            if (admin !== "") {
+                req.session.admin = admin;
+            }
+            res.render("admin/dashboard");
+        });
     });
 
     app.post("/do-post", (req, res) => {

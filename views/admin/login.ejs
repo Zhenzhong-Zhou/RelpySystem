@@ -1,0 +1,32 @@
+<%-include("../admin/layout")-%>
+<%-include("../admin/partials/header")-%>
+<h1>Login</h1>
+<form action="/do-admin-login" onsubmit="return doLogin(this);" method="post">
+    <label>Email Address</label>
+    <input type="email" name="email" placeholder="Email">
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Password">
+    <input type="submit" value="Login" class="btn btn-primary">
+</form>
+
+<script type="text/javascript">
+    function doLogin(form) {
+        $.ajax({
+            url: "/do-admin-login",
+            method: "post",
+            data: {
+                email: form.email.value,
+                password: form.password.value
+            }, success: function (response) {
+                if (response === "") {
+                    alert("Wrong")
+                }else {
+                    alert("success");
+                    window.location.href = "/admin/dashboard";
+                }
+            }
+        });
+        return false
+    }
+</script>
+<%-include("../admin/partials/footer")-%>
