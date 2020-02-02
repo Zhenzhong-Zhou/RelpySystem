@@ -22,16 +22,20 @@
 </div>
 <script>
     function doPost(form) {
+        let formData =  {
+            title: form.title.value,
+            content: form.content.value,
+            image: imagePath
+        }
         $.ajax({
             url: "/do-post",
             method: "POST",
-            data: {
-                title: form.title.value,
-                content: form.content.value,
-                image: imagePath
-            },
+            data: formData,
             success: function (response) {
-                alert(response);
+                alert(response.text);
+                formData._id = response._id;
+                let socket = io();
+                socket.emit("new_post", formData);
             }
         });
         return false;

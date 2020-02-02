@@ -7,6 +7,9 @@ const session = require("express-session");
 
 // initial app
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+
 
 app.use(express.static("public"));
 app.set("view engine", "ejs");
@@ -69,7 +72,11 @@ MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error
     app.post("/do-post", (req, res) => {
         blog.collection("posts").insertOne(req.body, function(error, document) {
             console.log(error);
-            res.redirect("/admin/posts");
+            res.send({
+                text: "post successfully",
+                _id: document.insertedId
+            });
+            // res.redirect("/admin/posts");
         });
     });
 
@@ -103,7 +110,16 @@ MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error
         })
     });
 
-    app.listen(3000, () => {
+    io.sockets.on("connection", function (socket) {
+        console.log("User connected!");
+        socket.broadcast.emit('user connected');
+        socket.on("new_post", formData => {
+            console.log(formData);
+            socket.broadcast.emit("new_post", formData);
+        })
+    });
+
+    server.listen(3000, () => {
         console.log("Connected to Server......")
     });
 });
