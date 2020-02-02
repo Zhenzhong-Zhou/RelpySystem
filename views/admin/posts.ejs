@@ -1,3 +1,4 @@
+<%-include("../admin/layout")-%>
 <%-include("../admin/partials/header")-%>
 <h1>Admin Posts</h1>
 <div>
@@ -6,7 +7,11 @@
             <label>Title</label>
             <input name="title" placeholder="Title">
         </div>
-
+        <br><br>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            Upload Image
+        </button>
+        <br><br>
         <div>
             <label>Content</label>
             <textarea name="content" placeholder="Content"></textarea>
@@ -15,18 +20,79 @@
         <input type="submit" value="Post">
     </form>
 </div>
-
 <script>
     function doPost(form) {
         $.ajax({
             url: "/do-post",
             method: "POST",
-            data: {title: form.title.value, content: form.content.value},
+            data: {
+                title: form.title.value,
+                content: form.content.value,
+                image: imagePath
+            },
             success: function (response) {
                 alert(response);
             }
         });
         return false;
     }
+</script>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/do-upload-image" method="post" enctype="multipart/form-data" id="form-upload">
+                    <div class="form-group">
+                        <input class="form-control" type="file" name="file">
+                    </div>
+                    <input class="btn btn-success" type="submit" value="Upload">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div id="myModal">-->
+<!--    <div>-->
+<!--        <div>-->
+<!--            <div>-->
+<!--                <h4>Upload Image</h4>-->
+<!--                <button type="button">X</button>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <form action="/do-upload-image" method="post" enctype="multipart/form-data" id="form-upload">-->
+<!--                    <div>-->
+<!--                        <input type="file" name="file">-->
+<!--                    </div>-->
+<!--                    <input type="submit" value="Upload">-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<script>
+    var imagePath = "";
+    $("#form-upload").on("submit", e => {
+        e.preventDefault();
+        $.ajax({
+            url: "/do-upload-image",
+            method: "post",
+            data: new FormData(this),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (response) {
+                // alert(response)
+                imagePath = response;
+                $("#myModal").modal("hide");
+            }
+        });
+    });
 </script>
 <%-include("../admin/partials/footer")-%>

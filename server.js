@@ -1,6 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const ObjectId = require("mongodb").ObjectId;
+const formidable = require("formidable");
+const fs = require("fs");
+const session = require("express-session");
 
 // initial app
 const app = express();
@@ -10,6 +13,11 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({limit: "10mb", extend: false}));
 app.use(bodyParser.json());
+
+app.use(session({
+    key: "admin",
+    secret: "random"
+}));
 
 const MongoClient = require("mongodb").MongoClient;
 MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error, client) => {
@@ -22,6 +30,7 @@ MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error
     });
 
     app.get("/admin/dashboard", (req, res) => {
+        if (req.session.admin)
         res.render("admin/dashboard");
     });
 
@@ -53,6 +62,17 @@ MongoClient.connect("mongodb://localhost:27017", {useNewUrlParser: true}, (error
                 res.send("comment successfully");
             }
         });
+    });
+
+    app.post("/do-upload-image", (req, res) => {
+        const formDate = new formidable.IncomingForm();
+        formDate.parse(req, (error, fields, files) => {
+            const oldPath = files.file.path;
+            const newPath = "public/images/" + files.file.name;
+            fs.rename(oldPath, newPath, err => {
+                res.send("/" + newPath);
+            });
+        })
     });
 
     app.listen(3000, () => {
