@@ -1,0 +1,32 @@
+<%-include("../admin/partials/header")-%>
+<h1>Admin Posts</h1>
+<div>
+    <form action="/do-post" onsubmit="return doPost(this)" method="POST">
+        <div>
+            <label>Title</label>
+            <input name="title" placeholder="Title">
+        </div>
+
+        <div>
+            <label>Content</label>
+            <textarea name="content" placeholder="Content"></textarea>
+        </div>
+
+        <input type="submit" value="Post">
+    </form>
+</div>
+
+<script>
+    function doPost(form) {
+        $.ajax({
+            url: "/do-post",
+            method: "POST",
+            data: {title: form.title.value, content: form.content.value},
+            success: function (response) {
+                alert(response);
+            }
+        });
+        return false;
+    }
+</script>
+<%-include("../admin/partials/footer")-%>

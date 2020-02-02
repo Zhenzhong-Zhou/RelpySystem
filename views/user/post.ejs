@@ -1,0 +1,52 @@
+<%-include("../user/partials/header")-%>
+<h1>User Post</h1>
+<div>
+    <%=post.title%>
+    <br><br><br><br>
+    <img alt="image">
+    <br><br><br><br>
+    <%=post.content%>
+    <br><br><br><br>
+    <label>Leave a Comment:</label>
+    <br><br>
+    <form action="/do-comment" onsubmit="return doComment(this);" method="post">
+        <input type="hidden" name="post_id" value="<%=post._id%>">
+        <br><br>
+        <input name="username" placeholder="Username">
+        <br><br>
+        <textarea name="comment" placeholder="Add a Comment" cols="30" rows="10"></textarea>
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<%if (post.comments) {%>
+    <%post.comments = post.comments.reverse();%>
+    <%post.comments.forEach(comment => {%>
+        <div>
+            <img alt="image">
+            <div>
+                <h5><%=comment.username%></h5>
+                <%=comment.comment%>
+            </div>
+        </div>
+    <%})%>
+<%}%>
+
+<script>
+    function doComment(form) {
+        $.ajax({
+           url: "/do-comment",
+           method: "post",
+           data: {
+               username: form.username.value,
+               comment: form.comment.value,
+               post_id: form.post_id.value
+           }, success: function (response) {
+               alert(response);
+            }
+        });
+        return false
+    }
+</script>
+<%-include("../user/partials/footer")-%>

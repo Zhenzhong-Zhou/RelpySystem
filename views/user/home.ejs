@@ -1,0 +1,12 @@
+<%-include("../user/partials/header")-%>
+<h1><a href="/">User Home Page</a></h1>
+<%if (locals.posts != null) {%>
+<%posts.forEach(post => {%>
+<div class="card" style="background-color: yellowgreen;">
+    <p><%=post.title%></p>
+    <p><%=post.content%></p>
+    <a href="posts/<%=post._id%>">Read More &rarr;</a>
+</div>
+<%})%>
+<%}%>
+<%-include("../user/partials/footer")-%>
