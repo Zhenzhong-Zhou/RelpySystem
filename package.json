@@ -20,7 +20,7 @@
     "formidable": "^1.2.1",
     "jquery": "^3.4.1",
     "mongodb": "^3.5.2",
-    "mongoose": "^5.8.11",
+    "mongoose": "^5.13.20",
     "socket.io": "^2.5.0"
   }
 }
